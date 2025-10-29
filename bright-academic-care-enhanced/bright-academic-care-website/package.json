@@ -1,0 +1,30 @@
+{
+  "name": "bright-academic-care-website",
+  "version": "1.0.0",
+  "description": "A website for Bright Academic Care, a coaching center in Bangladesh.",
+  "main": "src/index.html",
+  "scripts": {
+    "start": "live-server src",
+    "build": "echo 'Build process not defined yet.'",
+    "test": "echo 'No tests defined.'"
+  },
+  "keywords": [
+    "coaching",
+    "education",
+    "website"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "live-server": "^1.2.1"
+  },
+  "devDependencies": {},
+  "homepage": "https://yourwebsite.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/bright-academic-care-website.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/bright-academic-care-website/issues"
+  }
+}
