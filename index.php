@@ -1,3 +1,7 @@
+<?php
+// Initialize session and config
+require_once 'config/config.php';
+?>
 <!DOCTYPE html>
 <html lang="bn">
 <head>

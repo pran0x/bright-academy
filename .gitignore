@@ -1,0 +1,28 @@
+# Ignore uploaded files
+uploads/*
+!uploads/.gitkeep
+
+# Ignore config with sensitive data (copy config.example.php to config.php)
+# config/database.php
+
+# Ignore installation marker
+config/.installed
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore logs
+*.log
+error_log
+
+# Ignore temporary files
+tmp/
+temp/
+cache/
