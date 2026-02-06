@@ -1,19 +1,22 @@
-// DOM Content Loaded
+// =====================================================
+// Modern JavaScript for Bright Academic Care
+// Enhanced interactions and animations
+// =====================================================
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all functions
     initMobileMenu();
-    initSlider();
-    initTestimonialsSlider();
-    initScrollEffects();
     initSmoothScrolling();
-    initFormHandling();
-    initAdmissionForm();
+    initScrollEffects();
     initBackToTop();
     initAnimations();
-    initCounters();
+    initFormHandling();
+    initCountUpAnimation();
 });
 
+// =====================================================
 // Mobile Navigation Menu
+// =====================================================
 function initMobileMenu() {
     const navToggle = document.getElementById('nav-toggle');
     const navMenu = document.getElementById('nav-menu');
@@ -22,9 +25,23 @@ function initMobileMenu() {
     if (!navToggle || !navMenu) return;
 
     // Toggle mobile menu
-    navToggle.addEventListener('click', function() {
+    navToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
         navMenu.classList.toggle('active');
         navToggle.classList.toggle('active');
+        
+        // Animate hamburger
+        const bars = navToggle.querySelectorAll('.bar');
+        bars.forEach((bar, index) => {
+            if (navToggle.classList.contains('active')) {
+                if (index === 0) bar.style.transform = 'rotate(45deg) translateY(10px)';
+                if (index === 1) bar.style.opacity = '0';
+                if (index === 2) bar.style.transform = 'rotate(-45deg) translateY(-10px)';
+            } else {
+                bar.style.transform = 'none';
+                bar.style.opacity = '1';
+            }
+        });
     });
 
     // Close menu when clicking on a link
@@ -32,6 +49,13 @@ function initMobileMenu() {
         link.addEventListener('click', function() {
             navMenu.classList.remove('active');
             navToggle.classList.remove('active');
+            
+            // Reset hamburger
+            const bars = navToggle.querySelectorAll('.bar');
+            bars.forEach(bar => {
+                bar.style.transform = 'none';
+                bar.style.opacity = '1';
+            });
             
             // Update active link
             navLinks.forEach(l => l.classList.remove('active'));
@@ -44,56 +68,20 @@ function initMobileMenu() {
         if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
             navMenu.classList.remove('active');
             navToggle.classList.remove('active');
+            
+            // Reset hamburger
+            const bars = navToggle.querySelectorAll('.bar');
+            bars.forEach(bar => {
+                bar.style.transform = 'none';
+                bar.style.opacity = '1';
+            });
         }
     });
 }
 
-// Hero Slider Functionality
-let currentSlide = 0;
-const slides = document.querySelectorAll('.slide');
-const dots = document.querySelectorAll('.dot');
-const totalSlides = slides.length;
-
-function initSlider() {
-    if (totalSlides === 0) return;
-    
-    // Auto slide every 5 seconds
-    setInterval(nextSlide, 5000);
-    
-    // Initialize first slide
-    updateSlider();
-}
-
-function showSlide(index) {
-    // Hide all slides
-    slides.forEach(slide => slide.classList.remove('active'));
-    dots.forEach(dot => dot.classList.remove('active'));
-    
-    // Show current slide
-    if (slides[index]) slides[index].classList.add('active');
-    if (dots[index]) dots[index].classList.add('active');
-}
-
-function nextSlide() {
-    currentSlide = (currentSlide + 1) % totalSlides;
-    showSlide(currentSlide);
-}
-
-function prevSlide() {
-    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-    showSlide(currentSlide);
-}
-
-function currentSlideFunc(index) {
-    currentSlide = index - 1;
-    showSlide(currentSlide);
-}
-
-function updateSlider() {
-    showSlide(currentSlide);
-}
-
-// Smooth Scrolling for Navigation Links
+// =====================================================
+// Smooth Scrolling
+// =====================================================
 function initSmoothScrolling() {
     const navLinks = document.querySelectorAll('a[href^="#"]');
     
@@ -102,12 +90,14 @@ function initSmoothScrolling() {
             e.preventDefault();
             
             const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
             const targetSection = document.querySelector(targetId);
             
             if (targetSection) {
                 const header = document.querySelector('.header');
                 const headerHeight = header ? header.offsetHeight : 0;
-                const targetPosition = targetSection.offsetTop - headerHeight;
+                const targetPosition = targetSection.offsetTop - headerHeight - 20;
                 
                 window.scrollTo({
                     top: targetPosition,
@@ -118,7 +108,9 @@ function initSmoothScrolling() {
     });
 }
 
-// Scroll Effects and Active Navigation
+// =====================================================
+// Scroll Effects
+// =====================================================
 function initScrollEffects() {
     const header = document.querySelector('.header');
     const sections = document.querySelectorAll('section[id]');
@@ -129,13 +121,11 @@ function initScrollEffects() {
     window.addEventListener('scroll', function() {
         const scrollTop = window.pageYOffset;
         
-        // Header background on scroll
-        if (scrollTop > 100) {
-            header.style.background = 'linear-gradient(135deg, rgba(220, 38, 38, 0.95), rgba(185, 28, 28, 0.95))';
-            header.style.backdropFilter = 'blur(10px)';
+        // Header shadow on scroll
+        if (scrollTop > 50) {
+            header.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
         } else {
-            header.style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)';
-            header.style.backdropFilter = 'none';
+            header.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
         }
         
         // Active navigation based on scroll position
@@ -155,17 +145,22 @@ function initScrollEffects() {
                 link.classList.add('active');
             }
         });
+        
+        // Trigger animations on scroll
+        animateOnScroll();
     });
 }
 
+// =====================================================
 // Back to Top Button
+// =====================================================
 function initBackToTop() {
     const backToTopBtn = document.getElementById('backToTop');
     
     if (!backToTopBtn) return;
     
     window.addEventListener('scroll', function() {
-        if (window.pageYOffset > 300) {
+        if (window.pageYOffset > 500) {
             backToTopBtn.classList.add('show');
         } else {
             backToTopBtn.classList.remove('show');
@@ -180,155 +175,11 @@ function initBackToTop() {
     });
 }
 
-// Testimonials Slider Functionality
-let currentTestimonial = 0;
-const testimonialItems = document.querySelectorAll('.testimonial-item');
-const totalTestimonials = testimonialItems.length;
-
-function initTestimonialsSlider() {
-    if (totalTestimonials === 0) return;
-    
-    // Auto slide every 6 seconds
-    setInterval(nextTestimonial, 6000);
-    
-    // Initialize controls
-    const prevBtn = document.querySelector('.testimonial-prev');
-    const nextBtn = document.querySelector('.testimonial-next');
-    
-    if (prevBtn) {
-        prevBtn.addEventListener('click', prevTestimonial);
-    }
-    
-    if (nextBtn) {
-        nextBtn.addEventListener('click', nextTestimonial);
-    }
-    
-    // Initialize first testimonial
-    updateTestimonialSlider();
-}
-
-function showTestimonial(index) {
-    testimonialItems.forEach(item => item.classList.remove('active'));
-    if (testimonialItems[index]) {
-        testimonialItems[index].classList.add('active');
-    }
-}
-
-function nextTestimonial() {
-    currentTestimonial = (currentTestimonial + 1) % totalTestimonials;
-    showTestimonial(currentTestimonial);
-}
-
-function prevTestimonial() {
-    currentTestimonial = (currentTestimonial - 1 + totalTestimonials) % totalTestimonials;
-    showTestimonial(currentTestimonial);
-}
-
-function updateTestimonialSlider() {
-    showTestimonial(currentTestimonial);
-}
-
-// Form Handling
-function initFormHandling() {
-    const contactForm = document.querySelector('.contact-form form');
-    
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(this);
-            const name = this.querySelector('input[type="text"]').value;
-            const email = this.querySelector('input[type="email"]').value;
-            const phone = this.querySelector('input[type="tel"]').value;
-            
-            // Basic validation
-            if (!name || !email || !phone) {
-                alert('অনুগ্রহ করে সকল প্রয়োজনীয় তথ্য পূরণ করুন।');
-                return;
-            }
-            
-            // Add loading state
-            const submitBtn = this.querySelector('.submit-btn');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'পাঠানো হচ্ছে...';
-            submitBtn.disabled = true;
-            submitBtn.classList.add('loading');
-            
-            // Simulate form submission
-            setTimeout(() => {
-                alert('আপনার বার্তা সফলভাবে পাঠানো হয়েছে! আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।');
-                this.reset();
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('loading');
-                
-                // Track form submission
-                trackEvent('form_submission', {
-                    form_type: 'contact',
-                    page: window.location.pathname
-                });
-            }, 2000);
-        });
-    }
-}
-
-// Admission Form Handling
-function initAdmissionForm() {
-    const admissionForm = document.getElementById('admissionForm');
-    
-    if (admissionForm) {
-        admissionForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(this);
-            const studentName = formData.get('student_name');
-            const className = formData.get('class');
-            const phone = formData.get('phone');
-            const fatherName = formData.get('father_name');
-            const motherName = formData.get('mother_name');
-            
-            // Validation
-            if (!studentName || !className || !phone || !fatherName || !motherName) {
-                alert('অনুগ্রহ করে সকল প্রয়োজনীয় (*) ক্ষেত্র পূরণ করুন।');
-                return;
-            }
-            
-            // Phone validation
-            const phonePattern = /^01[3-9]\d{8}$/;
-            if (!phonePattern.test(phone.replace(/\D/g, ''))) {
-                alert('অনুগ্রহ করে সঠিক মোবাইল নম্বর দিন (01xxxxxxxxx)।');
-                return;
-            }
-            
-            // Add loading state
-            const submitBtn = this.querySelector('.admission-submit-btn');
-            const originalHTML = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> প্রক্রিয়াকরণ করা হচ্ছে...';
-            submitBtn.disabled = true;
-            
-            // Simulate form submission
-            setTimeout(() => {
-                alert(`ধন্যবাদ! ${studentName} এর ভর্তি আবেদন সফলভাবে জমা দেওয়া হয়েছে। আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।`);
-                this.reset();
-                submitBtn.innerHTML = originalHTML;
-                submitBtn.disabled = false;
-                
-                // Track admission form submission
-                trackEvent('admission_form_submission', {
-                    student_name: studentName,
-                    class: className,
-                    page: window.location.pathname
-                });
-            }, 3000);
-        });
-    }
-}
-
+// =====================================================
 // Scroll Animations
+// =====================================================
 function initAnimations() {
-    if (!('IntersectionObserver' in window)) return;
+    const animatedElements = document.querySelectorAll('.course-card-modern, .feature-card, .testimonial-card-modern, .class-card, .stat-card, .benefit-card, .contact-card');
     
     const observerOptions = {
         threshold: 0.1,
@@ -338,76 +189,349 @@ function initAnimations() {
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
+                entry.target.style.opacity = '0';
+                entry.target.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    entry.target.style.transition = 'all 0.6s ease-out';
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, 100);
+                
+                observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
     
-    // Add animation classes to elements
-    const animateElements = document.querySelectorAll('.course-card, .stat-item, .gallery-item, .contact-item, .faculty-card, .news-card, .testimonial-content');
-    animateElements.forEach(el => {
-        el.classList.add('fade-in');
-        observer.observe(el);
+    animatedElements.forEach(element => {
+        observer.observe(element);
     });
 }
 
-// Counter Animation for Statistics
-function animateCounter(element, target, duration = 2000) {
-    if (!element) return;
+function animateOnScroll() {
+    const elements = document.querySelectorAll('.stat-card, .course-card-modern, .feature-card');
+    const windowHeight = window.innerHeight;
     
-    let current = 0;
-    const increment = target / (duration / 16);
-    const hasPlus = target.toString().includes('+');
-    const hasPercent = target.toString().includes('%');
-    const numericTarget = parseInt(target.toString().replace(/[+%]/g, ''));
-    
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= numericTarget) {
-            current = numericTarget;
-            clearInterval(timer);
+    elements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const elementVisible = 150;
+        
+        if (elementTop < windowHeight - elementVisible) {
+            element.classList.add('animate-on-scroll');
         }
-        
-        let displayValue = Math.floor(current);
-        if (hasPlus) displayValue += '+';
-        if (hasPercent) displayValue += '%';
-        
-        element.textContent = displayValue;
-    }, 16);
+    });
 }
 
-// Initialize counters when stats section is visible
-function initCounters() {
-    const statsSection = document.querySelector('.about-stats');
-    if (!statsSection) return;
-    
-    let countersStarted = true;
+// =====================================================
+// Count Up Animation for Statistics
+// =====================================================
+function initCountUpAnimation() {
+    const statNumbers = document.querySelectorAll('.stat-number');
+    const observerOptions = {
+        threshold: 0.5
+    };
     
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
-            if (entry.isIntersecting && !countersStarted) {
-                countersStarted = true;
+            if (entry.isIntersecting) {
+                const target = entry.target;
+                const text = target.textContent;
+                const match = text.match(/(\d+[\.,]?\d*)/);
                 
-                const counters = [
-                    { element: document.querySelector('.stat-item:nth-child(1) .stat-number'), target: '3000+' },
-                    { element: document.querySelector('.stat-item:nth-child(2) .stat-number'), target: '17+' },
-                    { element: document.querySelector('.stat-item:nth-child(3) .stat-number'), target: '45+' },
-                    { element: document.querySelector('.stat-item:nth-child(4) .stat-number'), target: '100%' }
-                ];
-                
-                counters.forEach(counter => {
-                    if (counter.element) {
-                        animateCounter(counter.element, counter.target);
-                    }
-                });
+                if (match) {
+                    const number = parseFloat(match[1].replace(',', ''));
+                    const suffix = text.replace(match[1], '').trim();
+                    
+                    animateNumber(target, 0, number, 2000, suffix);
+                    observer.unobserve(target);
+                }
             }
         });
-    }, { threshold: 0.5 });
+    }, observerOptions);
     
-    observer.observe(statsSection);
+    statNumbers.forEach(stat => observer.observe(stat));
 }
 
-// Utility Functions
+function animateNumber(element, start, end, duration, suffix = '') {
+    const range = end - start;
+    const increment = range / (duration / 16);
+    let current = start;
+    
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= end) {
+            current = end;
+            clearInterval(timer);
+        }
+        
+        let displayValue;
+        if (end >= 1000) {
+            displayValue = Math.floor(current).toLocaleString('bn-BD');
+        } else {
+            displayValue = Math.floor(current);
+        }
+        
+        element.textContent = displayValue + suffix;
+    }, 16);
+}
+
+// =====================================================
+// Form Handling
+// =====================================================
+function initFormHandling() {
+    const admissionForm = document.getElementById('admissionForm');
+    
+    if (admissionForm) {
+        admissionForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            
+            // Validate form
+            if (!validateForm(data)) {
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = this.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>জমা হচ্ছে...</span>';
+            
+            // Simulate form submission (replace with actual API call)
+            setTimeout(() => {
+                // Success message
+                showNotification('আপনার আবেদন সফলভাবে জমা হয়েছে! আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।', 'success');
+                
+                // Reset form
+                this.reset();
+                
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }, 2000);
+        });
+        
+        // Real-time validation
+        const inputs = admissionForm.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            input.addEventListener('input', function() {
+                if (this.classList.contains('error')) {
+                    validateField(this);
+                }
+            });
+        });
+    }
+}
+
+function validateForm(data) {
+    let isValid = true;
+    const form = document.getElementById('admissionForm');
+    
+    // Clear previous errors
+    form.querySelectorAll('.error-message').forEach(el => el.remove());
+    form.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+    
+    // Validate required fields
+    const requiredFields = ['student_name', 'class', 'birth_date', 'gender', 'address', 'father_name', 'mother_name', 'phone'];
+    
+    requiredFields.forEach(field => {
+        const input = form.querySelector(`[name="${field}"]`);
+        if (!data[field] || data[field].trim() === '') {
+            showFieldError(input, 'এই ক্ষেত্রটি পূরণ করা আবশ্যক');
+            isValid = false;
+        }
+    });
+    
+    // Validate phone number
+    if (data.phone && !isValidPhone(data.phone)) {
+        const phoneInput = form.querySelector('[name="phone"]');
+        showFieldError(phoneInput, 'সঠিক ফোন নম্বর লিখুন (০১৭xxxxxxxx)');
+        isValid = false;
+    }
+    
+    // Validate email if provided
+    if (data.email && !isValidEmail(data.email)) {
+        const emailInput = form.querySelector('[name="email"]');
+        showFieldError(emailInput, 'সঠিক ইমেইল ঠিকানা লিখুন');
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
+function validateField(field) {
+    const value = field.value.trim();
+    let isValid = true;
+    
+    // Clear previous error
+    const existingError = field.parentElement.querySelector('.error-message');
+    if (existingError) existingError.remove();
+    field.classList.remove('error');
+    
+    // Check if required
+    if (field.hasAttribute('required') && !value) {
+        showFieldError(field, 'এই ক্ষেত্রটি পূরণ করা আবশ্যক');
+        isValid = false;
+    }
+    
+    // Validate phone
+    if (field.name === 'phone' && value && !isValidPhone(value)) {
+        showFieldError(field, 'সঠিক ফোন নম্বর লিখুন (০১৭xxxxxxxx)');
+        isValid = false;
+    }
+    
+    // Validate email
+    if (field.name === 'email' && value && !isValidEmail(value)) {
+        showFieldError(field, 'সঠিক ইমেইল ঠিকানা লিখুন');
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
+function showFieldError(field, message) {
+    field.classList.add('error');
+    
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.style.color = '#ef4444';
+    errorDiv.style.fontSize = '0.875rem';
+    errorDiv.style.marginTop = '0.25rem';
+    errorDiv.textContent = message;
+    
+    field.parentElement.appendChild(errorDiv);
+}
+
+function isValidPhone(phone) {
+    const phoneRegex = /^01[3-9]\d{8}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ''));
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: ${type === 'success' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ef4444, #dc2626)'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        z-index: 10000;
+        max-width: 400px;
+        animation: slideInRight 0.4s ease-out;
+        font-weight: 500;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.4s ease-out';
+        setTimeout(() => notification.remove(), 400);
+    }, 5000);
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+    
+    .form-group input.error,
+    .form-group select.error,
+    .form-group textarea.error {
+        border-color: #ef4444;
+    }
+`;
+document.head.appendChild(style);
+
+// =====================================================
+// Class Card Interactions
+// =====================================================
+document.querySelectorAll('.class-card, .course-card-modern').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px) scale(1.02)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+});
+
+// =====================================================
+// Parallax Effect for Hero Background
+// =====================================================
+window.addEventListener('scroll', function() {
+    const scrolled = window.pageYOffset;
+    const parallaxElements = document.querySelectorAll('.gradient-circle');
+    
+    parallaxElements.forEach((element, index) => {
+        const speed = (index + 1) * 0.5;
+        element.style.transform = `translate(${scrolled * speed * 0.1}px, ${scrolled * speed * 0.05}px)`;
+    });
+});
+
+// =====================================================
+// Lazy Loading for Images
+// =====================================================
+if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                    observer.unobserve(img);
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('img[data-src]').forEach(img => imageObserver.observe(img));
+}
+
+// =====================================================
+// Performance Optimization
+// =====================================================
+// Debounce function for scroll events
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -420,161 +544,9 @@ function debounce(func, wait) {
     };
 }
 
-// Optimized scroll handler
-const optimizedScrollHandler = debounce(function() {
-    // Any expensive scroll operations can go here
-}, 10);
+// Apply debounce to scroll event
+window.addEventListener('scroll', debounce(function() {
+    // Optimized scroll handlers here
+}, 10));
 
-window.addEventListener('scroll', optimizedScrollHandler);
-
-// Keyboard Navigation Support
-document.addEventListener('keydown', function(e) {
-    // Escape key closes mobile menu
-    if (e.key === 'Escape') {
-        const navMenu = document.getElementById('nav-menu');
-        const navToggle = document.getElementById('nav-toggle');
-        if (navMenu && navToggle) {
-            navMenu.classList.remove('active');
-            navToggle.classList.remove('active');
-        }
-    }
-    
-    // Arrow keys for slider navigation
-    if (e.key === 'ArrowLeft') {
-        prevSlide();
-    } else if (e.key === 'ArrowRight') {
-        nextSlide();
-    }
-});
-
-// Touch/Swipe Support for Slider
-let touchStartX = 0;
-let touchEndX = 0;
-
-const heroSlider = document.querySelector('.hero-slider');
-if (heroSlider) {
-    heroSlider.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    heroSlider.addEventListener('touchend', function(e) {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
-}
-
-function handleSwipe() {
-    const swipeThreshold = 50;
-    const diff = touchStartX - touchEndX;
-    
-    if (Math.abs(diff) > swipeThreshold) {
-        if (diff > 0) {
-            nextSlide();
-        } else {
-            prevSlide();
-        }
-    }
-}
-
-// Error Handling for Images
-document.addEventListener('DOMContentLoaded', function() {
-    const images = document.querySelectorAll('img');
-    images.forEach(img => {
-        img.addEventListener('error', function() {
-            console.warn('Image failed to load:', this.src);
-            // Create a placeholder SVG
-            this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect fill="%23f3f4f6" width="300" height="200"/><text x="50%" y="50%" text-anchor="middle" fill="%236b7280" font-family="Arial, sans-serif" font-size="14">ছবি লোড হচ্ছে না</text></svg>';
-        });
-    });
-});
-
-// Performance Optimization
-if ('IntersectionObserver' in window) {
-    // Use Intersection Observer for better performance
-    const lazyImages = document.querySelectorAll('img[data-src]');
-    const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.removeAttribute('data-src');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-    
-    lazyImages.forEach(img => imageObserver.observe(img));
-}
-
-// Local Storage for User Preferences
-function saveUserPreference(key, value) {
-    try {
-        localStorage.setItem(`brightacademic_${key}`, JSON.stringify(value));
-    } catch (e) {
-        console.warn('Local storage not available');
-    }
-}
-
-function getUserPreference(key, defaultValue) {
-    try {
-        const stored = localStorage.getItem(`brightacademic_${key}`);
-        return stored ? JSON.parse(stored) : defaultValue;
-    } catch (e) {
-        return defaultValue;
-    }
-}
-
-// Analytics Tracking (placeholder for future implementation)
-function trackEvent(eventName, eventData = {}) {
-    // This would integrate with Google Analytics or other tracking services
-    console.log('Event tracked:', eventName, eventData);
-}
-
-// Track navigation clicks
-document.addEventListener('click', function(e) {
-    if (e.target.matches('.nav-link')) {
-        trackEvent('navigation_click', {
-            link_text: e.target.textContent.trim(),
-            destination: e.target.getAttribute('href')
-        });
-    }
-    
-    if (e.target.matches('.cta-button')) {
-        trackEvent('cta_click', {
-            button_text: e.target.textContent.trim(),
-            page: window.location.pathname
-        });
-    }
-});
-
-// Phone number click tracking
-document.addEventListener('click', function(e) {
-    if (e.target.textContent && e.target.textContent.match(/০১৭\d{8}/)) {
-        trackEvent('phone_click', {
-            phone_number: e.target.textContent.trim()
-        });
-    }
-});
-
-// Initialize running banner animation restart on visibility change
-document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-        const bannerContent = document.querySelector('.banner-content');
-        if (bannerContent) {
-            bannerContent.style.animation = 'none';
-            bannerContent.offsetHeight; // Trigger reflow
-            bannerContent.style.animation = 'scroll-left 20s linear infinite';
-        }
-    }
-});
-
-// Console branding
-console.log('%cব্রাইট একাডেমিক কেয়ার', 'color: #dc2626; font-size: 24px; font-weight: bold;');
-console.log('%cWebsite developed with care and attention to detail', 'color: #6b7280; font-size: 14px;');
-
-// Service Worker Registration for PWA capabilities (future enhancement)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        // Service worker would go here for offline functionality
-    });
-}
+console.log('🎓 Bright Academic Care - Frontend Loaded Successfully!');
